@@ -1,6 +1,7 @@
-import { CompletionItem, CompletionItemKind } from 'vscode-languageserver';
+import { CompletionItem, CompletionItemKind, integer } from 'vscode-languageserver';
 
 export type Function = {
+	args: integer;
 	name: string;
 };
 
