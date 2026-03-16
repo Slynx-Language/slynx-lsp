@@ -37,7 +37,8 @@ connection.onInitialize((params: InitializeParams) => {
     capabilities: {
       textDocumentSync: TextDocumentSyncKind.Incremental,
       completionProvider: {
-        resolveProvider: true
+        resolveProvider: true,
+        triggerCharacters: ['.']
       }
     }
   };
@@ -60,7 +61,7 @@ connection.onInitialized(() => {
 
 
 
-completion(connection);
+completion(connection, documents);
 
 documents.listen(connection);
 connection.listen();
