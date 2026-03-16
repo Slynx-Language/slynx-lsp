@@ -1,1 +1,1 @@
-{"root":["./src/server.ts","./src/completion/index.ts","./src/completion/native.ts"],"version":"5.9.3"}
+{"root":["./src/server.ts","./src/completion/fuctions.ts","./src/completion/index.ts","./src/completion/native.ts","./src/completion/variable.ts","./src/lexer/lexer.ts"],"version":"5.9.3"}

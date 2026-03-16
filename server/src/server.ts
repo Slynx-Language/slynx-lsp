@@ -60,7 +60,7 @@ connection.onInitialized(() => {
 
 
 
-completion(connection);
+completion(connection, documents);
 
 documents.listen(connection);
 connection.listen();
