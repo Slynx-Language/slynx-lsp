@@ -1,0 +1,16 @@
+{
+	"name": "lsp-slynx",
+	"description": "A language server extension for programming language Slynx",
+	"author": "Slynx Team",
+	"license": "MIT",
+	"version": "1.0.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Slynx/lsp-slynx"
+	},
+	"dependencies": {
+		"vscode-languageserver": "^9.0.1",
+		"vscode-languageserver-textdocument": "^1.0.11"
+	},
+	"scripts": {}
+}

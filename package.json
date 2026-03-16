@@ -1,0 +1,75 @@
+{
+ "name": "lsp-slynx",
+ "description": "A language server extension for programming language Slynx",
+ "author": "Slynx Team",
+ "license": "MIT",
+ "version": "1.0.0",
+ "repository": {
+  "type": "git",
+  "url": "https://github.com/Slynx/lsp-slynx"
+ },
+ "publisher": "slynx",
+ "categories": [],
+ "keywords": [
+  "multi-root ready"
+ ],
+ "engines": {
+  "vscode": "^1.100.0"
+ },
+ "activationEvents": [
+  "onLanguage:slynx"
+ ],
+ "main": "./client/out/extension",
+ "contributes": {
+  "configuration": {
+   "type": "object",
+   "title": "Slynx Configuration",
+   "properties": {
+    "slynx.compilerPath": {
+     "type": "string",
+     "default": "slynx",
+     "description": "Path to the Slynx compiler."
+    }
+   }
+  },
+  "languages": [
+   {
+    "id": "slynx",
+    "aliases": [
+     "slynx",
+     "slynx-lang"
+    ],
+    "extensions": [
+     ".slynx"
+    ],
+    "configuration": "./language-configuration.json"
+   }
+  ],
+  "grammars": [
+   {
+    "language": "slynx",
+    "scopeName": "main.slynx",
+    "path": "./syntaxes/slynx.tmLanguage.json"
+   }
+  ]
+  
+ },
+ "scripts": {
+  "vscode:prepublish": "npm run compile",
+  "compile": "tsc -b",
+  "watch": "tsc -b -w",
+  "lint": "eslint",
+  "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+  "test": "sh ./scripts/e2e.sh"
+ },
+ "devDependencies": {
+  "@eslint/js": "^9.13.0",
+  "@stylistic/eslint-plugin": "^2.9.0",
+  "@types/mocha": "^10.0.6",
+  "@types/node": "^22",
+  "eslint": "^9.13.0",
+  "mocha": "^10.3.0",
+  "typescript": "^5.9.2",
+  "typescript-eslint": "^8.39.0"
+ }
+}
