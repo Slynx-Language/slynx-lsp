@@ -4,7 +4,7 @@ import { complection, Variable } from './variable';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { extractFunctionsFromTokens, extractObjectsFromTokens, extractVariablesFromTokens, lexer } from '../lexer/lexer';
 import { complectionFunc } from './fuctions';
-import { complectionObject, complectionObjectArgs } from './objects';
+import { complectionObject, complectionObjectArgs, convertStringInObjects } from './objects';
 
 
 export function completion(params: Connection, documents: TextDocuments<TextDocument>) {
@@ -15,8 +15,9 @@ export function completion(params: Connection, documents: TextDocuments<TextDocu
 
 		const text = document ? document.getText() : '';
 		const tokens = lexer(text);
-
-		const variables = extractVariablesFromTokens(tokens);
+		const objects = extractObjectsFromTokens(tokens);
+		const objectItems = complectionObject(objects);
+		const variables = extractVariablesFromTokens(tokens, objects);
 		const variableItems = complection(variables);
 
 		const functions = extractFunctionsFromTokens(tokens);
@@ -26,24 +27,34 @@ export function completion(params: Connection, documents: TextDocuments<TextDocu
 			return item;
 		});
 
-		const objects = extractObjectsFromTokens(tokens);
-		const objectItems = complectionObject(objects);
+
 		if (_textDocumentPosition.context?.triggerCharacter === ".") {
 			const position = _textDocumentPosition.position;
 			const line = text.split('\n')[position.line];
 			const beforeCursor = line.substring(0, position.character);
+
 			const match = beforeCursor.match(/(\w+)\.$/);
+
 			if (match) {
-				const objectName = match[1];
-				const foundObject = objects.find(o => o.name === objectName);
-				if (foundObject) {
-					return complectionObjectArgs([foundObject]) ?? [];
+				const varName = match[1];
+
+		
+				const variable = variables.find(v => v.name === varName);
+
+				if (variable?.type.type) {
+					const obj = variable.type.type;
+
+					
+					return complectionObjectArgs([obj]);
+				}
+				else{
+					return [];
 				}
 			}
 		}
 
 
-		
+
 
 		return [...nativeItems
 			?? [], ...functionItems

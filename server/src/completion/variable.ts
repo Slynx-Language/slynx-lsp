@@ -1,9 +1,13 @@
 import { CompletionItem, CompletionItemKind } from 'vscode-languageserver';
+import { Objects } from './objects';
 
 export type Variable = {
 	name: string;
+	type: VariableType
 };
-
+export interface VariableType {
+	type: Objects | undefined;
+}
 export function complection(variables: Variable[]): CompletionItem[] {
 	return variables.map((variable, index) => ({
 			label: variable.name,

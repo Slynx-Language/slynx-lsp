@@ -1,6 +1,6 @@
 import { Function } from '../completion/fuctions';
 import { Objects } from '../completion/objects';
-import { Variable } from '../completion/variable';
+import { Variable, VariableType } from '../completion/variable';
 
 export function lexer(text: string): string[] {
 	return text
@@ -9,8 +9,10 @@ export function lexer(text: string): string[] {
 		.filter(Boolean);
 }
 const indedifiy = /^[a-zA-Z_]\w*$/;
-export function extractVariablesFromTokens(tokens: string[]): Variable[] {
+export function extractVariablesFromTokens(tokens: string[], objects: Objects[]): Variable[] {
   const variables: Variable[] = [];
+  let name = "";
+  let type: VariableType = { type: undefined };
 
   for (let i = 0; i < tokens.length; i++) {
 
@@ -25,8 +27,16 @@ export function extractVariablesFromTokens(tokens: string[]): Variable[] {
 
       
       if (tokens[j] && indedifiy.test(tokens[j])) {
+        name = tokens[j];
+        j++;
+      }
+      if(objects.some((obj) => obj.name === tokens[j + 1])){
+        type = { type: objects.find((obj) => obj.name === tokens[j + 1]) };
+      }
+      if (name) {
         variables.push({
-          name: tokens[j]
+          name,
+          type
         });
       }
     }

@@ -1,4 +1,4 @@
-import { CompletionItem, CompletionItemKind } from 'vscode-languageserver';
+import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver';
 
 export type Objects = {
 	args: string[];
@@ -6,9 +6,11 @@ export type Objects = {
 };
 export function complectionObject(obj: Objects[]): CompletionItem[] {
 	return obj.map((obj, index) => ({
-			label: obj.name,
+			label: `${obj.name}(${obj.args.length > 0 ? '...' : ''})`,
 			kind: CompletionItemKind.Class,
 			data: index,
+			insertText: `${obj.name}(${obj.args.map((a, i) => `\${${i + 1}:${a}:}`).join(', ')});`,
+			insertTextFormat: InsertTextFormat.Snippet,
 			detail: `Class: ${obj.name}`,
 			documentation: `This is a class named ${obj.name}`
 	}));
@@ -23,6 +25,16 @@ export function complectionObjectArgs(obj: Objects[]): CompletionItem[] {
 			documentation: `This is a property named ${arg} of class ${obj.name}`
 		}))
 	);
+}
+
+export function convertStringInObjects(str: string, objects: Objects[]): Objects {
+	if(objects.some(o => o.name === str)) {
+		const nameObject = objects.find(o => o.name === str);
+		if(nameObject) {
+			return nameObject;
+		}
+	}
+	return { name: str, args: [] };
 }
 
 export function resolveObject(item: CompletionItem, objects: Objects[]): CompletionItem {
