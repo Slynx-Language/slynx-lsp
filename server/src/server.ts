@@ -39,6 +39,9 @@ connection.onInitialize((params: InitializeParams) => {
       completionProvider: {
         resolveProvider: true,
         triggerCharacters: ['.']
+      },
+      signatureHelpProvider: {
+        triggerCharacters: ['(', ',']
       }
     }
   };

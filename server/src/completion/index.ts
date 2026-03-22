@@ -1,12 +1,23 @@
-import { Connection, TextDocuments } from 'vscode-languageserver';
+import { Connection, SignatureHelp, TextDocuments } from 'vscode-languageserver';
 import { native } from './native';
 import { complection, Variable } from './variable';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { extractFunctionsFromTokens, extractObjectsFromTokens, extractVariablesFromTokens, lexer } from '../lexer/lexer';
 import { complectionFunc } from './fuctions';
-import { complectionObject, complectionObjectArgs, convertStringInObjects } from './objects';
-
-
+import { complectionObject, complectionObjectArgs, convertStringInObjects, onSignatureHelpObject, Type } from './objects';
+const documentCache: DocumentCache = new Map<string | undefined, {
+	tokens: any[];
+	variables: Variable[];
+	functions: any[];
+	objects: any[];
+}>();
+export type DocumentCache = Map<string | undefined, CacheData>;
+export type CacheData = {
+    tokens: any[];     
+    variables: Variable[];
+    functions: any[];  
+    objects: any[];    
+};
 export function completion(params: Connection, documents: TextDocuments<TextDocument>) {
 	params.onCompletion(async (_textDocumentPosition) => {
 
@@ -26,6 +37,12 @@ export function completion(params: Connection, documents: TextDocuments<TextDocu
 			item.label = `${item.label}(${args > 0 ? '...' : ''})`;
 			return item;
 		});
+		documentCache.set(document?.uri, {
+			tokens,
+			variables,
+			functions,
+			objects
+		});
 
 
 		if (_textDocumentPosition.context?.triggerCharacter === ".") {
@@ -38,16 +55,16 @@ export function completion(params: Connection, documents: TextDocuments<TextDocu
 			if (match) {
 				const varName = match[1];
 
-		
+
 				const variable = variables.find(v => v.name === varName);
 
 				if (variable?.type.type) {
 					const obj = variable.type.type;
 
-					
+
 					return complectionObjectArgs([obj]);
 				}
-				else{
+				else {
 					return [];
 				}
 			}
@@ -62,4 +79,9 @@ export function completion(params: Connection, documents: TextDocuments<TextDocu
 			?? [], ...objectItems
 			?? []];
 	});
+	params.onSignatureHelp((params): SignatureHelp | null => {
+		const Objects = onSignatureHelpObject(params, documentCache, documents);
+		return Objects;
+	});
+
 }

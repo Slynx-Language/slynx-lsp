@@ -1,10 +1,10 @@
 import { Function } from '../completion/fuctions';
-import { Objects } from '../completion/objects';
+import { Objects, Type } from '../completion/objects';
 import { Variable, VariableType } from '../completion/variable';
 
 export function lexer(text: string): string[] {
 	return text
-		.split(/(\s+|:|\(|\)|\{|\})/)
+	  .split(/(\s+|:|\(|\)|\{|\}|,)/)
 		.map(t => t.trim())
 		.filter(Boolean);
 }
@@ -84,8 +84,9 @@ export function extractObjectsFromTokens(tokens: string[]): Objects[] {
   for (let i = 0; i < tokens.length; i++) {
     if (tokens[i] === "object") {
       let name;
-      let args: string[] = [];
+      let args: Type[] = [];
       let j = i + 1;
+      
 
       if (tokens[j] && indedifiy.test(tokens[j])) {
         name = tokens[j];
@@ -105,7 +106,7 @@ export function extractObjectsFromTokens(tokens: string[]): Objects[] {
           }
 
           if (tokens[k + 1] === ":" && indedifiy.test(tokens[k])) {
-            args.push(tokens[k]);
+            args.push({name: tokens[k], tipo: tokens[k+2]});
             k += 2;
             continue;
           }
